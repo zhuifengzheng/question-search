@@ -1,0 +1,49 @@
+{
+  "aliases": {
+    "index_question": {}
+  },
+  "settings": {
+    "number_of_replicas": 0,
+    "number_of_shards": 2
+  },
+  "mappings": {
+    "index_question": {
+      "properties": {
+        "id": {
+          "type": "long"
+        },
+        "name": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "english_name": {
+          "type": "text",
+          "analyzer": "english"
+        },
+        "description": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "content": {
+          "type": "text"
+        },
+        "create_by": {
+          "type": "keyword"
+        },
+        "update_by": {
+          "type": "keyword"
+        },
+        "create_time": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "update_time": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        }
+      }
+    }
+  }
+}

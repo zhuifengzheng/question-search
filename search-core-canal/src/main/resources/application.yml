@@ -1,0 +1,56 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:er}?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF8&serverTimezone=Asia/Shanghai&tcpKeepAlive=true&autoReconnect=true&useSSL=false
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+    hikari:
+      max-lifetime: 60000
+  application:
+    name: ${APPLICATION_NAME:question}
+  main:
+    allow-bean-definition-overriding: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update # 每次运行程序，没有表会新建表，表内有数据不会清空，只会更新
+
+    open-in-view: false
+    ansi:
+      enabled: detect
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 10000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+mybatis:
+  mapperLocations: classpath*:mapper/*Mapper.xml
+#  typeAliasesPackage: >
+#    com.yp.model
+server:
+  port: 8090
+
+logging:
+  level:
+    com.yp: debug
+
+
+search:
+  canal:
+    hostname: 127.0.0.1
+    port: 11111
+    destination: example
+    username: canal
+    password: canal
+  es:
+    hostname: 127.0.0.1
+    port: 9200
+    index: question
+    type: index_question
+    updatecore: question1
+    currentcore: question
