@@ -1,8 +1,5 @@
 package com.yp.questionserver.controller;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.yp.bean.reponse.QuestionInfo;
 import com.yp.bean.reponse.base.ResultReponse;
 import com.yp.bean.request.QuestionRequest;
 import com.yp.bean.util.ResultGenerate;
@@ -10,8 +7,6 @@ import com.yp.questionserver.service.ElasticSearchService;
 import com.yp.questionserver.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @Author by yuanpeng
@@ -28,17 +23,9 @@ public class ElasticSearchController {
     private QuestionService questionService;
 
     @RequestMapping("search")
-    public ResultReponse search(QuestionRequest request){
+    public ResultReponse search(QuestionRequest request) {
         return ResultGenerate.success(elasticSearchService.search(request));
     }
-
-//    @GetMapping
-//    public ResultReponse list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-//        PageHelper.startPage(page, size);
-//        List<QuestionInfo> list = questionService.findAll();
-//        PageInfo pageInfo = new PageInfo(list);
-//        return ResultGenerate.success(pageInfo);
-//    }
 
     @PostMapping("add")
     public ResultReponse add(@RequestBody QuestionRequest request) {
@@ -46,7 +33,7 @@ public class ElasticSearchController {
         return ResultGenerate.success(result);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResultReponse delete(@PathVariable Long id) {
         boolean result = questionService.deleteById(id);
         return ResultGenerate.success(result);
@@ -57,9 +44,6 @@ public class ElasticSearchController {
         boolean result = questionService.update(request);
         return ResultGenerate.success(result);
     }
-    @RequestMapping("test")
-    public ResultReponse test(QuestionRequest request){
-        return ResultGenerate.success("test");
-    }
+
 
 }

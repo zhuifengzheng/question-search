@@ -41,7 +41,7 @@ public class CanalScheduling implements Runnable {
     @Override
     @Scheduled(fixedDelay = 2000)
     public void run() {
-        log.info("===开始同步mysql中的数据");
+        log.info("开始同步mysql中的数据");
         long batchId = -1;
         try {
             // 一次取1000条数据
@@ -74,9 +74,6 @@ public class CanalScheduling implements Runnable {
      */
     private void publishCanalEvent(CanalEntry.Entry entry) {
         log.info("收到canal消息{}", entry.toString());
-        if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONBEGIN || entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND) {
-            return;
-        }
 
         CanalEntry.RowChange change;
         try {

@@ -12,7 +12,7 @@ public class SearchCoreCanalApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SearchCoreCanalApplication.class, args);
-        log.info("===SearchCoreCanalApplication start success ...");
+        log.info("SearchCoreCanalApplication start success ...");
     }
 
 }

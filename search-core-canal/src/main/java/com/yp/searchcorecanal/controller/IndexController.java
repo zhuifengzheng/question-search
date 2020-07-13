@@ -25,4 +25,9 @@ public class IndexController {
         return ResultGenerate.success();
     }
 
+    @RequestMapping("/all/most")
+    public ResultReponse generateIndexAndSize(int size){
+        indexService.generateIndex(size);
+        return ResultGenerate.success();
+    }
 }

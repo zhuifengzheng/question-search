@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class IndexServiceImpl implements IndexService {
     private static String cache_key = "search_question:%s";
+
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     final String update = String.format(cache_key, "update");
     final String current = String.format(cache_key, "current");
@@ -52,7 +55,7 @@ public class IndexServiceImpl implements IndexService {
 
         List<Question> questionList = questionService.getAll();
         if (CollectionUtils.isEmpty(questionList)) {
-            log.info("===数据为空，不需要建立索引");
+            log.info("数据为空，不需要建立索引");
             return true;
         }
 
@@ -78,7 +81,7 @@ public class IndexServiceImpl implements IndexService {
 
         int total = questionService.getCount();
         if (total == 0) {
-            log.info("===数据为空，不需要建立索引");
+            log.info("数据为空，不需要建立索引");
             return true;
         }
 
@@ -116,16 +119,17 @@ public class IndexServiceImpl implements IndexService {
     private List<Map<String, Object>> setMapData(List<Question> questionList) {
         List<Map<String, Object>> datas = new ArrayList<Map<String, Object>>();
         for (Question question : questionList) {
+            // 这里到字段需要和数据库中字段一致，因为canal监听表数据改变时读取到是数据库中的列名
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("id", question.getId());
             map.put("name", question.getName());
-            map.put("englishName", question.getEnglishName());
+            map.put("english_name", question.getEnglishName());
             map.put("description", question.getDescription());
-            map.put("context", question.getContent());
-            map.put("createBy", question.getCreateBy());
-            map.put("updateBy", question.getUpdateBy());
-            map.put("createTime", question.getCreateTime());
-            map.put("updateTime", question.getUpdateTime());
+            map.put("content", question.getContent());
+            map.put("create_by", question.getCreateBy());
+            map.put("update_by", question.getUpdateBy());
+            map.put("create_time", format.format(question.getCreateTime()));
+            map.put("update_time", format.format(question.getUpdateTime()));
             datas.add(map);
 
         }
@@ -138,11 +142,11 @@ public class IndexServiceImpl implements IndexService {
      * @param currentCore
      */
     private void generateIndexAfterHandler(String updateCore, String currentCore) {
-        log.info("===对question索引全量重建完成,进行集合的切换");
+        log.info("对question索引全量重建完成,进行集合的切换");
         redisService.set(update, currentCore);
         redisService.set(current, updateCore);
 
-        log.info("===切换成功,当前备份的索引集合为{}，正在服务中的索引集合为{}", currentCore, updateCore);
+        log.info("切换成功,当前备份的索引集合为{}，正在服务中的索引集合为{}", currentCore, updateCore);
     }
 
     /**
@@ -150,7 +154,7 @@ public class IndexServiceImpl implements IndexService {
      * @return
      */
     private Map<String, String> getIndexCore(){
-        log.info("===开始全量构建索引");
+        log.info("开始全量构建索引");
         String updateCore = redisService.get(update, String.class);
         if (StringUtils.isEmpty(updateCore)) {
             updateCore = esProperties.getUpdatecore();
@@ -160,7 +164,7 @@ public class IndexServiceImpl implements IndexService {
         if (StringUtils.isEmpty(currentCore)) {
             currentCore = esProperties.getCurrentcore();
         }
-        log.info("===当前备份索引集合:{},正在服务中对索引集合:{}", updateCore, currentCore);
+        log.info("当前备份索引集合:{},正在服务中对索引集合:{}", updateCore, currentCore);
 
         Map<String, String> map = new HashMap<>();
         map.put("updateCore",updateCore);

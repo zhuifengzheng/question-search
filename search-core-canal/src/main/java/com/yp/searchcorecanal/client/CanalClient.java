@@ -28,7 +28,7 @@ public class CanalClient implements DisposableBean {
     @Bean
     public CanalConnector getCanalConnector() {
         // CanalConnectors.newSingleConnector
-        log.info("===开始连接cannal");
+        log.info("开始连接cannal");
         canalConnector = CanalConnectors.newClusterConnector(Lists.newArrayList(
                 new InetSocketAddress(canalProperties.getHostname(), canalProperties.getPort())),
                 canalProperties.getDestination(), canalProperties.getUsername(), canalProperties.getPassword()
@@ -36,11 +36,11 @@ public class CanalClient implements DisposableBean {
 
         canalConnector.connect();
 
-        canalConnector.subscribe("er.question");
+        canalConnector.subscribe(canalProperties.getFilterTable());
 //        canalConnector.subscribe("*.*");
 
         canalConnector.rollback();
-        log.info("===cannal连接初始化成功");
+        log.info("cannal连接初始化成功");
         return canalConnector;
     }
 

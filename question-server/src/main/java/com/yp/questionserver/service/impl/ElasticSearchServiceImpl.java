@@ -1,11 +1,11 @@
 package com.yp.questionserver.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.yp.bean.reponse.QuestionInfo;
 import com.yp.bean.request.Paging;
 import com.yp.bean.request.QuestionRequest;
+import com.yp.questionserver.config.EsProperties;
 import com.yp.questionserver.service.ElasticSearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
@@ -38,11 +38,14 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
     @Autowired
     private RestHighLevelClient highLevelClient;
 
+    @Autowired
+    private EsProperties esProperties;
+
     @Override
     public Paging<List<QuestionInfo>> search(QuestionRequest request) {
         // 创建查询请求
-        SearchRequest searchRequest = new SearchRequest("question");
-        searchRequest.types(new String[] {"index_question"});
+        SearchRequest searchRequest = new SearchRequest(esProperties.getIndex());
+        searchRequest.types(new String[]{esProperties.getType()});
 
         // 创建查询数据源
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -71,6 +74,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
     /**
      * 构造查询条件
+     *
      * @param request
      * @return
      */
@@ -88,27 +92,28 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         }
         if (StringUtils.hasText(request.getDescription())) {
             boolQueryBuilder.must(QueryBuilders.matchQuery("description", request.getDescription()));
-
         }
         if (StringUtils.hasText(request.getContent())) {
-            boolQueryBuilder.must(QueryBuilders.queryStringQuery("content:"+request.getContent()));
+            boolQueryBuilder.must(QueryBuilders.queryStringQuery("content:" + request.getContent()));
         }
         if (StringUtils.hasText(request.getUpdateBy())) {
             boolQueryBuilder.must(QueryBuilders.termQuery("update_by", request.getUpdateBy()));
         }
         boolQueryBuilder.must(QueryBuilders.matchAllQuery());
+
         return boolQueryBuilder;
     }
 
     /**
      * 结果转化
+     *
      * @param response
      * @param request
      * @return
      */
     public Paging<List<QuestionInfo>> convertResponse(SearchResponse response, QuestionRequest request) {
         long totalHits = response.getHits().getTotalHits();
-        if (0 == totalHits){
+        if (0 == totalHits) {
             return new Paging<>();
         }
         List<QuestionInfo> resultInfo = Lists.newArrayList();
@@ -126,6 +131,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
                 }
             }
         }
-        return new Paging(totalHits,resultInfo,request.getPageSize());
+        return new Paging(totalHits, resultInfo, request.getPageSize());
     }
 }
