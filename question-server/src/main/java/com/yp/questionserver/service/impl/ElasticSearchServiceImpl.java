@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.yp.bean.reponse.QuestionInfo;
 import com.yp.bean.request.Paging;
 import com.yp.bean.request.QuestionRequest;
+import com.yp.questionserver.build.ElasticSearchQueryBuilder;
 import com.yp.questionserver.config.EsProperties;
 import com.yp.questionserver.service.ElasticSearchService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -50,7 +52,12 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         // 创建查询数据源
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         // 设置查询字段与条件
-        searchSourceBuilder.query(convertBuilder(request));
+//        searchSourceBuilder.query(convertBuilder(request));
+        try {
+            searchSourceBuilder.query(ElasticSearchQueryBuilder.build(request));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
         if (StringUtils.hasText(request.getHighlightedField())) {
             searchSourceBuilder.highlighter(new HighlightBuilder().field(request.getHighlightedField()).preTags("<h1 style='red'>")

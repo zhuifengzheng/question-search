@@ -24,9 +24,10 @@ public class QuestionServerApplicationTests {
     @Test
     public void contextLoads() {
         QuestionRequest request = new QuestionRequest();
-//        request.setName("测试1");
-//        request.setContent("测试");
-//        request.setEnglishName("test");
+        request.setName("测试1");
+        request.setContent("测试");
+        request.setEnglishName("test");
+//        request.setUpdateTime("2020-07-12 16:51:54");
         Paging<List<QuestionInfo>> search = elasticSearchService.search(request);
         System.out.println(search.getTotal());
         System.out.println(search.toString());
