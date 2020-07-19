@@ -16,7 +16,7 @@ public @interface ESRange {
      * 范围上限 默认ture
      * @return
      */
-    boolean from() default true;
+    boolean from() default false;
 
     /**
      * 包不包括from()值 默认包括

@@ -36,4 +36,6 @@ public class QuestionRequest extends BaseRequest{
     private String updateTime;
 
 
+    @ESRange(columnName = "update_time", to = true, includeLower = true)
+    private String updateTime2;
 }
