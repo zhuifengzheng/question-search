@@ -34,7 +34,6 @@ public class ElasticSearchQueryBuilder {
         }
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-
         // 拿到所有属性
         Field[] fields = zClass.getDeclaredFields();
         for (Field field : fields) {
@@ -76,7 +75,8 @@ public class ElasticSearchQueryBuilder {
                         }else if (esRange.to()){
                             rangeQueryBuilder.to(value).includeUpper(esRange.includeUpper());
                         }
-                        boolQueryBuilder.must(rangeQueryBuilder);
+                        boolQueryBuilder.filter(rangeQueryBuilder);
+                        // boolQueryBuilder.must(rangeQueryBuilder);
                     }else if (field.isAnnotationPresent(ESLike.class)){
                         ESLike esLike = field.getAnnotation(ESLike.class);
                         columnName = StringUtils.isEmpty(esLike.columnName())?field.getName():esLike.columnName();
